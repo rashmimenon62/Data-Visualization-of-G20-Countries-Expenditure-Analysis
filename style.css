@@ -1,0 +1,132 @@
+*{
+    margin: 0;
+}
+
+h1 {
+    margin: 0;
+    padding: 0;
+    margin-top: 0;
+    font-family: Arial;
+    text-align: center;
+}
+
+img{
+    width:1800px;
+    height: 700px;
+}
+
+video{
+    width :100%;
+    height: auto;
+    
+}
+
+p{
+    text-align: left;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+
+
+
+h5{
+    text-align: right ;
+    margin-right: 0px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    font-family: Georgia;
+    
+}
+
+
+
+header{
+  background:#097553;
+}
+
+header::after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+
+ 
+
+body{
+    background-color: #ffffff;
+}
+
+.logo {
+    float: left;
+    padding: 0;
+   
+  }
+  * {box-sizing:border-box}
+
+
+
+.navbar a {
+  float: left ;
+  font-size: 17px;
+  color:black;
+  text-align: center;
+  padding: 12px 12px;
+  text-decoration: none;
+
+}
+
+/* The dropdown container */
+.dropdown {
+  float: left;
+  overflow: hidden;
+}
+
+/* Dropdown button */
+.dropdown .dropbtn {
+  font-size: 16px;
+  border: none;
+  outline: none;
+  color:black;
+  padding: 14px 16px;
+  background-color:#097553;
+  font-family: inherit; /* Important for vertical align on mobile phones */
+  margin: 0; 
+}
+
+/* Add a red background color to navbar links on hover */
+.navbar a:hover, .dropdown:hover .dropbtn {
+  background-color: rgb(160, 126, 126);
+}
+
+/* Dropdown content (hidden by default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 150px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+ 
+}
+
+/* Within dropdown */
+.dropdown-content a {
+  color: black;
+  padding: 16px; 
+  display: block;
+  text-align: left;
+  float: none;
+}
+.dropdown-content a:hover {
+  background-color:  rgb(160, 126, 126);;
+}
+
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+#paraalign{
+  text-align: center;
+  font-size: larger;
+}
+
