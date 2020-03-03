@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang = "en">
+<link rel="stylesheet" type="text/css" href="style.css" >
+<head>
+
+    <script type = "text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<script type = "text/javascript">
+            google.charts.load('current',{'packages':['corechart','controls']});
+		    google.charts.setOnLoadCallback(MasterSheet);
+
+// Defining the MasterSheet
+
+    function MasterSheet() {
+        
+        SubSheet('MilitaryExpenditure','SELECT A,H',
+	                      MilitaryMapResponseHandler);
+        
+        SubSheet('EducationExpenditure','SELECT A,H',
+                          EducationMapResponseHandler);
+                          
+        SubSheet('HealthExpenditure','SELECT A,H',
+	                      HealthMapResponseHandler);
+        
+        SubSheet('MilitaryExpenditure', 'SELECT A,B,C,D,E,F,G',
+                          MilitaryExpenditureResponseHandler);
+                          
+		SubSheet('EducationExpenditure', 'SELECT A,B,C,D,E,F,G',
+                          EducationExpenditureResponseHandler);
+                          
+		SubSheet('HealthExpenditure', 'SELECT A,B,C,D,E,F',
+                         HealthExpenditureResponseHandler);
+
+        SubSheet('CompareExpendituretoGDP', 'SELECT A,B,C',
+                         CompareExpendituretoGDPResponseHandler);
+                         
+        SubSheet('EdutoGDP', 'SELECT A,B,C,D,E,F,G',
+                         EdutoGDPResponseHandler);
+
+        SubSheet('MilitarytoGDP', 'SELECT A,B,C,D,E,F,G',
+                         MilitarytoGDPResponseHandler);
+
+        SubSheet('HealthtoGDP', 'SELECT A,B,C,D,E,F',
+                         HealthtoGDPResponseHandler);
+
+        SubSheet('EduHealthMilitary', 'SELECT A, B, D',
+                          EduMilitarySpendingResponseHandler);
+        
+        SubSheet('EduHealthMilitary', 'SELECT A, C, D',
+                          HealthMilitarySpendingResponseHandler);
+
+        SubSheet('GDPPerCapita1', 'SELECT A, B, C, D, E, F, G',
+                          GDPPerCapitaResponseHandler);
+                          
+        SubSheet('HealthPerCapita1', 'SELECT A, B, C, D, E, F, G',
+                          HealthPerCapitaResponseHandler);
+
+        SubSheet('EducationPerCapita1', 'SELECT A, B, C',
+                          EducationPerCapitaResponseHandler);
+
+        SubSheet('MilitaryPerCapita1', 'SELECT A, B, D',
+                          MilitaryPerCapita2012ResponseHandler);
+
+        SubSheet('MilitaryPerCapita1', 'SELECT A, C, E',
+                          MilitaryPerCapita2017ResponseHandler);
+
+        SubSheet('HealthExpenditure2', 'SELECT A, B, C, D, E, F, G, H, I, J, K',
+                          HealthGrowthValueResponseHandler);  
+                          
+        SubSheet('HealthExpenditure1', 'SELECT A, H, I',
+                          HealthGrowthPercentageResponseHandler);        
+                          
+        SubSheet('EducationExpenditure2', 'SELECT A, B, C, D, E, F, G, H, I',
+                          EducationGrowthValueResponseHandler);  
+                          
+        SubSheet('EducationExpenditure1', 'SELECT A, H, I',
+                          EducationGrowthPercentageResponseHandler); 
+
+    }
+
+// Defining SubSheet
+    function SubSheet(sheetName, query, responseHandler) {
+		var queryString = encodeURIComponent(query);
+		var query = new google.visualization.Query(
+			'  https://docs.google.com/spreadsheets/d/1__Oen9wotWc8xWjeN-FBjk6UoyZIbirF8yYnzoNUtYw/gviz/tq?sheet='
+			+ sheetName + '&headers=1&tq=' + queryString);
+			query.send(responseHandler);
+    }
+
+//Creating a Map Visual for the Military Expenditure
+
+    function MilitaryMapResponseHandler(response) {
+		var data = response.getDataTable();
+        var options = {
+		height :400,		
+		colorAxis: {colors: ['orange','red']}, 
+		title: 'Overall Military Expenditure 2012-2017 (USD Billions $)'		
+		};
+
+        var chart = new google.visualization.GeoChart(
+		document.getElementById('MilitaryMap_div'));
+        chart.draw(data, options);
+    }
+
+//Creating a Map Visual for the Education Expenditure 
+
+    function EducationMapResponseHandler(response) {
+		var data = response.getDataTable();
+        var options = {
+		height :400,	
+		colorAxis: {colors: ['#e1dd72','#1b6535']}, 
+		title: 'Overall Education Expenditure 2012-2017 (USD Billions $)'		
+		};
+
+        var chart = new google.visualization.GeoChart(
+		document.getElementById('EducationMap_div'));
+        chart.draw(data, options);
+    }
+    
+//Creating a Map Visual for the Health Expenditure
+
+    function HealthMapResponseHandler(response) {
+		var data = response.getDataTable();
+        var options = {
+		height :400,		
+		colorAxis: {colors: ['#4a536b','#aed6dc']}, 
+		title: ' Overall Health Expenditure 2012-2016 (USD Billions $)'		
+		};
+
+        var chart = new google.visualization.GeoChart(
+		document.getElementById('HealthMap_div'));
+        chart.draw(data, options);
+    }
+    
+//Illustrating Military Expenditure using a Column Chart
+
+    function MilitaryExpenditureResponseHandler(response) {
+			var data = response.getDataTable();
+			data.sort({column: 3, desc:true});
+			var options = {
+                height: 600,
+				vAxis: {title: 'Military Spending in (US $)'},
+                hAxis: {title: 'Country'},
+                isStacked: true,
+			};
+
+			var chart = new google.visualization.ColumnChart(
+			document.getElementById('military_spending_div'));
+			chart.draw(data, options);
+	} 
+
+//Illustrating Education Expenditure using a Column Chart
+
+    function EducationExpenditureResponseHandler(response) {
+			var data = response.getDataTable();
+			data.sort({column: 3, desc:true});
+			var options = {
+				height: 600,
+				vAxis: {title: 'Education Spending in (US $)'},
+                hAxis: {title: 'Country'},
+                isStacked: false,
+			};
+
+			var chart = new google.visualization.ColumnChart(
+			document.getElementById('education_spending_div'));
+			chart.draw(data, options);
+	}
+
+//Illustrating Health Expenditure using a Bar Chart with a Category Picker
+    
+    function HealthExpenditureResponseHandler(response) {
+			var data = response.getDataTable();
+			data.sort({column: 3, desc:false});
+		
+        var countrydropdown = new google.visualization.ControlWrapper({
+          'controlType': 'CategoryFilter',
+          'containerId': 'Dashboard_Control',
+          'options': {
+            'filterColumnLabel': 'Country Name',
+            'ui': {
+              'labelStacking': 'vertical',
+              'allowTyping': true,  
+              'allowMultiple': false
+            }
+          }
+        });
+
+        var chart = new google.visualization.ChartWrapper({
+          'chartType': 'BarChart',
+          'containerId': 'Health_Spending_Div',
+          'options': {
+            'title': 'Spending in Billion (USD)',
+            'colors': ['#488f31','#91bb7e','#dac767','#ee9b62','#de425b'],
+            'width': 800,
+            'height': 400,
+            'chartArea': {top: 20, right: 100, bottom: 0}
+          },
+        });
+      
+// Creating the Dashboard Environment 
+
+        var dashboard = new google.visualization.Dashboard(document.getElementById('dashboard'));
+        dashboard.bind(countrydropdown, [chart]);
+        dashboard.draw(data);
+
+		google.visualization.events.addListener(dashboard, 'ready', function() {
+          var countrySelectedValues = countrydropdown.getState()['selectedValues'];       
+          if (countrySelectedValues.length == 1 ) {
+            document.getElementById('Health_Spending_Div').style.visibility = 'visible';
+          }
+          else 
+            {
+                document.getElementById('Health_Spending_Div').style.visibility = 'hidden';    
+            }
+        });
+      
+	}    
+
+// Comparing the Overall Expenditure (Military+Health+Education) to the GDP
+
+    function CompareExpendituretoGDPResponseHandler(response) {
+			var data = response.getDataTable();
+			data.sort({column: 1, desc: true});			
+			var options = {
+				height: 600,
+				colors : ['Turquoise','Crimson'],
+				isStacked: true,
+                theme: 'material',
+				//title: 'Comparison of Overall Expenditure vs Total GDP in billions ($)(year 2015)',
+				hAxis: {title: 'Spending in Billions USD ($)'}
+			};
+			
+			var chart = new google.visualization.BarChart(
+				document.getElementById('CompareExpGDP_div'));
+			chart.draw(data, options);
+        }
+
+// Using Bubble Chart to show Education Expenditure as % of GDP 
+   
+function EdutoGDPResponseHandler(response) {
+			var data = response.getDataTable();
+			data.sort({column: 1, desc:true});
+			var options = {
+				//title: 'Educational Expenditure as a % of GDP',
+				height: 600,
+				colorAxis:{colors: ['Green','Yellow']},
+				vAxis: {title: 'GDP %'},
+				hAxis: {title: 'GDP %'},
+            };
+
+			var chart = new google.visualization.BubbleChart(
+			document.getElementById('EdutoGDP_div'));
+			chart.draw(data, options);
+		} 
+
+// Using Bubble Chart to show Military Expenditure as % of GDP 
+
+function MilitarytoGDPResponseHandler(response) {
+			var data = response.getDataTable();
+			data.sort({column: 1, desc:true});
+			var options = {
+				title: 'Military Expenditure as a % of GDP',
+				height: 600,
+				colorAxis:{colors: ['Red','Olive']},
+				vAxis: {title: 'GDP %'},
+                hAxis: {title: 'GDP %'},
+                bubble: {
+                textStyle: {
+                fontSize: 14,
+                fontName: 'Times-Roman',
+                color: 'blue',
+                italic: true
+                }
+                }
+                };
+
+			var chart = new google.visualization.BubbleChart(
+			document.getElementById('MilitarytoGDP_div'));
+			chart.draw(data, options);
+		} 
+
+// Using Bubble Chart to show Health Expenditure as % of GDP         
+       
+function HealthtoGDPResponseHandler(response) {
+			var data = response.getDataTable();
+			data.sort({column: 1, desc:true});
+			var options = {
+				//title: 'Health Expenditure as a % of GDP',
+				height: 600,
+				colorAxis:{colors: ['Orange','Blue']},
+				vAxis: {title: 'GDP % '},
+				hAxis: {title: 'GDP %'},    
+            };
+
+			var chart = new google.visualization.BubbleChart(
+			document.getElementById('HealthtoGDP_div'));
+			chart.draw(data, options);
+		} 
+       
+// Comparing Total Education Expenditure and Military Expenditure over a period from 2012-2016
+
+function EduMilitarySpendingResponseHandler(response) {
+			var data = response.getDataTable();
+			data.sort({column: 1, desc: true});
+            var options = {
+	        colors: ['Yellow','Green'],
+            //title : 'Cumulative Education Expenditure vs Cumulative Military Expenditure from 2012 to 2016',
+            vAxis: {title: 'Total Spending in Billion US $'},
+            hAxis: {title: 'Country'},
+            theme: 'material',
+            seriesType: 'bars',
+            series: {7: {type: 'line'}}
+            };
+
+    var chart = new google.visualization.ComboChart(document.getElementById('EduMilitarySpending_div'));
+    chart.draw(data, options);
+  }
+
+// Comparing Total Health Expenditure and Military Expenditure over a period from 2012-2016
+
+function HealthMilitarySpendingResponseHandler(response) {
+			var data = response.getDataTable();
+			data.sort({column: 1, desc: true});
+            var options = {
+			colors: ['Black','Gold'],
+            //title : 'Cumulative Health Expenditure vs Cumulative Military Expenditure from 2012 to 2016',
+            vAxis: {title: 'Total Spending in Billion US $'},
+            hAxis: {title: 'Country'},
+            theme: 'material',
+            seriesType: 'bars',
+            series: {7: {type: 'line'}}
+    };
+
+    var chart = new google.visualization.ComboChart(document.getElementById('HealthMilitarySpending_div'));
+    chart.draw(data, options);
+  }
+
+// Using Donut Charts to compare Health Expenditure Per Capita and GDP Per Capita
+
+function GDPPerCapitaResponseHandler(response) {
+
+            var data = response.getDataTable();
+            var options = {
+            height :400,
+            pieHole: 0.4
+            };
+
+            var chart = new google.visualization.PieChart(
+            document.getElementById('GDPPiePerCapita_div'));
+            chart.draw(data, options);
+}
+
+function HealthPerCapitaResponseHandler(response) {
+
+		var data = response.getDataTable();
+        var options = {
+		height :400,
+        pieHole: 0.4
+		};
+
+        var chart = new google.visualization.PieChart(
+		document.getElementById('HealthPiePerCapita_div'));
+		chart.draw(data, options);
+      }
+
+//Comparing Education Expenditure Per Capita to the GDP Per Capita
+
+function EducationPerCapitaResponseHandler(response) {
+
+        var data = response.getDataTable();
+        var options = {
+				height: 600,
+				legend: 'none',
+                bars: 'vertical',
+                bar: {groupWidth: "85%"},
+				colors : ['Orange','Skyblue'],
+				isStacked: true,
+				//title: 'Education Expenditure Per Capita vs GDP Per Capita ($) (Year 2013)',
+				hAxis: {title: 'Spending in USD ($)'}
+			};
+			
+			var chart = new google.visualization.BarChart(
+			document.getElementById('EducationPerCapita_div'));
+            chart.draw(data, options);
+        }
+
+//Comparing Military Expenditure Per Capita to the GDP Per Capita for 2012 and 2017
+
+function MilitaryPerCapita2012ResponseHandler(response) {
+
+        var data = response.getDataTable();
+        var options = {
+                height: 600,
+                colors : ['Grey','Magenta'],
+                //title: 'Military Expenditure Per Capita vs GDP Per Capita ($)(Year 2012)',
+                vAxis: {title: 'Spending in USD ($)',
+                hAxis: {title: 'Country'}}
+                  };
+            
+            var chart = new google.visualization.ScatterChart(
+            document.getElementById('MilitaryPerCapita2012_div'));
+            chart.draw(data, options);
+        }
+
+function MilitaryPerCapita2017ResponseHandler(response) {
+
+        var data = response.getDataTable();
+        var options = {
+                height: 600,
+                colors : ['Yellow','Lightgreen'],
+                pointShape: 'star',
+                pointSize: 18,
+                //title: 'Military Expenditure Per Capita vs GDP Per Capita ($)(Year 2017)',
+                vAxis: {title: 'Spending in USD ($)',
+                hAxis: {title: 'Country'}}
+            };
+            
+            var chart = new google.visualization.ScatterChart(
+            document.getElementById('MilitaryPerCapita2017_div'));
+            chart.draw(data, options);
+        }
+
+// Tracking Growth in Health Expenditure in $ value
+
+function HealthGrowthValueResponseHandler(response) {
+
+		var data = response.getDataTable();
+	    data.sort({column: 0, desc: true});
+	    var view = new google.visualization.DataView(data);  
+        var options = {
+				vAxis:{title:'Healthcare spending in fixed value billions: USD($)'},
+			    colors : ['Red','Blue','Yellow','Green'],
+                //title: 'Fastest $ Growth in Health (2012-2016)',
+                hAxis: {title: 'Year',ticks: [2012, 2013, 2014, 2015, 2016]},
+                };
+					 
+			   var  chart = new google.visualization.LineChart(
+			   document.getElementById('Health_Growth_Value_div'));	
+			   chart.draw(data, options);
+		}			
+
+// Tracking Growth in Health Expenditure in % value
+
+function HealthGrowthPercentageResponseHandler(response) {
+		
+		  
+        var data = response.getDataTable();
+        data.sort({column: 0, desc: true});
+        var view = new google.visualization.DataView(data);     
+        var options = {
+                height: 600,
+                colors : ['Green', 'Magenta'],
+                //title: 'Fastest % Growth in Health (2012-2016)',
+                vAxis: {title: 'Growth in Healthcare Expenditure'},
+                hAxis: {title: 'Country'},
+                isStacked: false,
+			};              
+               var  chart = new google.visualization.ColumnChart(
+               document.getElementById('Health_Growth_Percent_div'));                    
+               chart.draw(data, options);
+        }			
+
+// Tracking Growth in Education Expenditure in $ value
+
+function EducationGrowthValueResponseHandler(response) {
+		
+		  
+		var data = response.getDataTable();
+	    data.sort({column: 0, desc: true});
+	    var view = new google.visualization.DataView(data);    
+        var options = {
+				  vAxis:{title:'Healthcare spending in fixed value billions: USD($)'},
+			      colors : ['#9B59B6','#F39C12','#ABEBC6','#34495E'],
+                  headerHeight: 12,
+                  //title: 'Fastest $ Growth in Education (2012-2016)',
+                  hAxis: {title: 'Year',ticks: [2012, 2013, 2014, 2015, 2016]}
+            };
+					 
+			   var  chart = new google.visualization.LineChart(
+			   document.getElementById('Education_Growth_Value_div'));	
+			   chart.draw(data, options);
+		}			
+
+// Tracking Growth in Education Expenditure in % value
+
+function EducationGrowthPercentageResponseHandler(response) {
+		
+		  
+        var data = response.getDataTable();
+        data.sort({column: 0, desc: true});
+        var view = new google.visualization.DataView(data);
+     
+       var options = {
+                height: 600,
+                colors : ['Salmon', 'Goldenrod'],
+                //title: 'Fastest % Growth in Education (2012-2016)',
+                vAxis: {title: 'Growth in Education Expenditure'},
+                hAxis: {title: 'Country'},
+                isStacked: false,
+			};
+                
+                     
+               var  chart = new google.visualization.ColumnChart(
+                    document.getElementById('Education_Growth_Percent_div'));
+                    
+               chart.draw(data, options);
+        }			
+    
+
+
+</script>
+</head>
+
+<header>
+<img src="logo.png" alt="logo" class="logo" 
+style="width:100px;height:100px;border:0;" >
+  </div>
+
+  <h5>Countdown to the 2020 G20 Summit </h5>
+  <p id="demo" style="float: right;"> </p>
+  <script src="time.js">             
+</script>
+
+<div class="navbar">
+    <div class="dropdown" >
+      <button class="dropbtn"> Home </button>
+      <div class="dropdown-content">
+        <a href="#RAR" class="">Resource Allotment Report</a>
+        <a href="#OverallSpending" class="">Overall Spending Comparison</a> 
+        <a href="#PerCapitaSpending " class="">Per Capita Spending</a>
+        <a href="#Growth"  class="">Growth</a>
+        <a href="#Data"  class="">Data</a>
+      </div>
+    </div>
+   <a href="about.html">About</a></b>
+  </div>
+
+  
+
+    </header>
+   
+   <div id="content">
+        <img id="mainImage" 
+            src="2019.jpg"/>
+            
+        <script src="image.js">
+        </script>
+    </div> 
+
+ 
+
+
+          </div>
+        </div>
+        <hr>
+
+
+<body>
+    <br>
+    <br>
+
+<!-- Resource Allotment of G20 Expenditure for Military, Education, Health-->
+<div id="RAR"> </div>
+<h2 style="text-align: center"> Resource Allotment for G20 Countries from 2012 - 2017(Billions) </h2>
+       
+        <hr>
+        <br>
+        <br>
+        <br>
+
+<b> <center>  Military Expenditure Map for G20 Countries (2012 - 2017) </center></b>
+<br>
+
+ <div style= "float: inherit ;" id="MilitaryMap_div" style= "text-align: center; width:1200px; height:600px;"></div>
+<br>
+<br>
+<br>
+<b> <center> Military Expenditure for G20 Countries (2012 - 2017) </center></b>
+    <div style= "float: inherit ;"id="military_spending_div" style="width:1200px; height:600px;"></div>
+<br>
+<br>
+<br>
+<b><center> Education Expenditure Map for G20 Countries (2012 - 2017)</center></b>
+<br>
+<br>
+    <div style= "float: inherit ;" id="EducationMap_div" style="width:1200px; height:600px;"></div>
+<br>
+<br>
+<br>
+<b> <center> Education Expenditure for G20 Countries (2012 - 2017)</center></b>
+    <div style= "float: inherit ;"id="education_spending_div" style="width:1200px; height:600px;"></div>
+<br>
+<br>
+<b> <center> Health Expenditure Map for G20 Countries (2012 - 2016)</center></b>
+<br>
+<br>
+<br>
+    <div style= "float: inherit ;" id="HealthMap_div" style="width:1200px; height:600px;"></div>
+<br>
+<br>
+<br>
+<b> <center> Health Expenditure for G20 Countries (2012 - 2016)</center></b>
+<br>
+<br>
+<br>
+<body style="font-family: Georgia;">
+    <div id="dashboard">
+        <div style='vertical-align: top'>
+          <div style='width: 300px; font-size: 0.8em;'>
+            <div id="Dashboard_Control"></div>
+            <br>
+            <br>    
+        <div style="float: inherit"; id="Health_Spending_Div" style="width:1200px; height:600px;"></div>
+            <br>
+    </div>
+  </body>  
+<br>
+<br>
+<br>
+<hr>
+<!--2. Compare Expenditure to the GDP -->
+<div id="OverallSpending"></div>
+<h2 style="text-align: center;" > Country Expenditure against GDP </h2>
+<hr>
+<br>
+<br>
+<b> <center> Compare Overall Expenditure to GDP </center></b>
+    <div style= "float: inherit ;" id="CompareExpGDP_div" style="width:1200px; height:600px;"></div>
+<br>
+<br>
+<b> <center> Education as a % of GDP (2012-2015)</center></b>
+    <div style= "float: inherit ;" id="EdutoGDP_div" style="width:1200px; height:600px;"></div>
+<br>
+<br>
+<b> <center> Military as a % of GDP (2012-2015)</center></b>
+    <div  style= "float: inherit ;"id="MilitarytoGDP_div" style="width:1200px; height:600px;"></div>
+<br>
+<br>
+<b><center>Health as a % of GDP (2012-2015)</center></b>
+    <div style= "float: inherit ;"id="HealthtoGDP_div" style="width:1200px; height:600px;"></div>
+<br>
+<br>
+<hr>
+<!--3 Compare Education and Health to Overall Military Spending -->
+
+<h3 style="text-align: center;" >Compare Education and Health Expenditure to Military Expenditure</h3>
+<hr>
+<br>
+<br>
+<b><center>Education vs Military (2012-2016)</center></b>
+    <div id="EduMilitarySpending_div" style="width:1200px; height:600px;"></div>
+<br>
+<br>
+<b><center>Health vs Military (2012-2016)</center></b>
+    <div id="HealthMilitarySpending_div" style="width:1200px; height:600px;"></div>
+ <br>
+ <br>   
+ <hr>
+ <!--4 Per Capita Expenditure to Per Capita GDP-->
+<div id="PerCapitaSpending"></div>
+<h2 style="text-align: center;" >  Health Care and GDP Per Capita</h2>
+<hr>
+    <br>
+    <br>
+<b><center>Health Expenditure Per Capita (2012-2017)<center></b>
+    <br>
+    <div style= "float: inherit ;"id="HealthPiePerCapita_div" style="width:1200px; height:600px;"></div>
+    <br>
+    <br>
+<b><center>GDP Per Capita (2012-2017)<center></b>
+    <br>
+    <div style= "float: inherit ;"id="GDPPiePerCapita_div" style="width:1200px; height:600px;"></div>
+    <br>
+    <br>
+<b><center>Education Per Capita vs GDP Per Capita(2013)</center></b>
+    <div style= "float: inherit ;"id="EducationPerCapita_div" style="width:1200px; height:600px;"></div>
+    <br>
+    <br>
+<b><center>Military Per Capita vs GDP Per Capita(2012)</center></b>
+    <div id="MilitaryPerCapita2012_div" style="width:1200px; height:600px;"></div>
+    <br>
+    <br>   
+<b><center>Military Per Capita vs GDP Per Capita(2017)</center></b>
+    <div id="MilitaryPerCapita2017_div" style="width:1200px; height:600px;"></div>
+    <br>
+    <br>   
+    <hr>
+<!--5 Fastest Growing Countries-->
+<div id="Growth"></div>
+<h2 style="text-align: center;" >  Fastest Growing Countries</h2>
+<hr>
+<br>
+<br>
+<b><center>Fastest Growing Countries in Health Spending ($) <center></b>
+<div id="Health_Growth_Value_div" style="width:1200px; height:600px;"></div>
+    <br/>
+    <br/>  
+<b><center>Fastest Growing Countries in Health Spending (%)<center></b>
+<div id="Health_Growth_Percent_div" style="width:1200px; height:600px;"></div>
+    <br/>
+    <br/>  
+<b><center>Fastest Growing Countries in Education Spending ($)<center></b>
+<div id="Education_Growth_Value_div" style="width:1200px; height:600px;"></div>
+    <br/>
+    <br/> 
+<b><center>Fastest Growing Countries in Education Spending (%)<center></b>
+<div id="Education_Growth_Percent_div" style="width:1200px; height:600px;"></div>
+    <br>
+    <br>
+    <hr>
+    <div id="Data"></div>
+    <h2> Data </h2>
+    <hr>
+    <br>
+    <br>
+    <p style="text-align: center; font-size: 18px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;"  >
+    The data sources that were used for the purpose of the project were: <br>
+     <a href="https://databank.worldbank.org/data/">World Bank </a> for the Education,Military, Health and GDP indicators. </p>
+    <br>
+    <br>
+    <p style="text-align: center; font-size: 18px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;" > Other Sources used for the project were: <br>
+    <a href="https://www.w3schools.com/"> W3schools </a> for HTML/CSS/JavaScript<br>
+    <a href="https://developers.google.com/chart"> Google Visualization API </a> for the myriad of Charts <br>
+    <a href="https://en.wikipedia.org/wiki/Home"> Wikipedia </a>for information on the G20 <br>
+    <a href="https://www.consilium.europa.eu/">European Union</a>  for video Higlights <br>
+    </p>
+    <br>
+    <br>
+    <br>
+
+</body>
+</html>
+    
